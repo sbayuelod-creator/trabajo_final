@@ -221,10 +221,51 @@ void mostrarComentariosDesdeFecha(const vector<Comentario> &comentarios, const s
     }
 
     if (!encontrado) {
-        cout << "No se encontraron comentarios después de esa fecha.\n";
+        cout << "No se encontraron comentarios despuï¿½s de esa fecha.\n";
     }
 }
+void listarProductosCarritoPorUsuario() {
 
+    ifstream archivo("Carrito.txt");
+
+    if (!archivo) {
+        cout << "No existe el archivo de carritos.\n";
+        return;
+    }
+
+    string linea;
+
+    cout << "\n=== PRODUCTOS DEL CARRITO POR USUARIO ===\n";
+
+    while (getline(archivo, linea)) {
+
+        stringstream ss(linea);
+
+        string idUsuario;
+        string nombreUsuario;
+        string idProducto;
+        string nombreProducto;
+        string cantidad;
+        string precio;
+        string subtotal;
+
+        getline(ss, idUsuario, ',');
+        getline(ss, nombreUsuario, ',');
+        getline(ss, idProducto, ',');
+        getline(ss, nombreProducto, ',');
+        getline(ss, cantidad, ',');
+        getline(ss, precio, ',');
+        getline(ss, subtotal, ',');
+
+        cout << "Usuario: " << nombreUsuario
+             << " | Producto: " << nombreProducto
+             << " | Cantidad: " << cantidad
+             << " | Precio: $" << precio
+             << endl;
+    }
+
+    archivo.close();
+}
 
 int main() {
 	setlocale(LC_ALL, "spanish");
@@ -234,20 +275,20 @@ int main() {
     vector<Comentario> listaComentarios = cargarComentarios("Comentarios.txt");
 
     string correo, contrasena;
-    cout << "Correo electrónico: ";
+    cout << "Correo electrï¿½nico: ";
     getline(cin, correo);
-    cout << "Contraseña: ";
+    cout << "Contraseï¿½a: ";
     getline(cin, contrasena);
 
     Usuario *usuarioActual = iniciarSesion(usuarios, correo, contrasena);
     if (!usuarioActual) {
-        cout << "Usuario o contraseña inválidos.\n";
+        cout << "Usuario o contraseï¿½a invï¿½lidos.\n";
         return 0;
     }
 
     int opcion;
     do {
-        cout << "\n=== MENÚ PRINCIPAL ===\n";
+        cout << "\n=== MENï¿½ PRINCIPAL ===\n";
         cout << "1. Listar productos con stock menor a 15\n";
         cout << "2. Listar todos los usuarios\n";
         cout << "3. Agregar producto al carrito\n";
@@ -255,8 +296,9 @@ int main() {
         cout << "5. Guardar carrito en archivo\n";
         cout << "6. Ver carrito guardado (archivo)\n";
         cout << "7. Visualizar comentarios\n";
+        cout << "8. Listar productos del carrito por usuario\n";
         cout << "0. Salir\n";
-        cout << "Seleccione una opción: ";
+        cout << "Seleccione una opciï¿½n: ";
         cin >> opcion;
         cin.ignore();
 
@@ -276,7 +318,7 @@ int main() {
             for (size_t i = 0; i < usuarios.size(); ++i)
                 cout << usuarios[i].id << " | " << usuarios[i].nombre
                      << " | " << usuarios[i].correo
-                     << " | Dirección: " << usuarios[i].direccion
+                     << " | Direcciï¿½n: " << usuarios[i].direccion
                      << " | Pago: " << usuarios[i].metodoPago << "\n";
             break;
         }
@@ -324,17 +366,23 @@ int main() {
             break;
         case 7: {
     string fechaBusqueda;
-    cout << "Ingrese la fecha límite (Formato AAAA-MM-DD, ej: 2025-06-01): ";
+    cout << "Ingrese la fecha lï¿½mite (Formato AAAA-MM-DD, ej: 2025-06-01): ";
     getline(cin, fechaBusqueda);
     
     mostrarComentariosDesdeFecha(listaComentarios, fechaBusqueda);
     break;
+        }
+         
+        case 8:{
+    listarProductosCarritoPorUsuario();
+    break;
 }
+
         case 0:
             cout << "Saliendo del sistema...\n";
             break;
         default:
-            cout << "Opción no válida.\n";
+            cout << "Opciï¿½n no vï¿½lida.\n";
         }
     } while (opcion != 0);
 
