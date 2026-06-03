@@ -36,7 +36,7 @@ struct Comentario {
     string fecha;     
 };
 
-//hice aqui el cambio de punto 2
+//punto 2
 struct OrdenDeCompra {
     int idOrden;
     Usuario usuario;
@@ -46,8 +46,7 @@ struct OrdenDeCompra {
     double envio;
     double total;
 };
-//termina cambio punto 2
-
+//punto 2
 
 int convertirEntero(const string &texto) {
     int valor = 0;
@@ -236,8 +235,50 @@ void mostrarComentariosDesdeFecha(const vector<Comentario> &comentarios, const s
         cout << "No se encontraron comentarios despu�s de esa fecha.\n";
     }
 }
-// cambio punto 2
+void listarProductosCarritoPorUsuario() {
 
+    ifstream archivo("Carrito.txt");
+
+    if (!archivo) {
+        cout << "No existe el archivo de carritos.\n";
+        return;
+    }
+
+    string linea;
+
+    cout << "\n=== PRODUCTOS DEL CARRITO POR USUARIO ===\n";
+
+    while (getline(archivo, linea)) {
+
+        stringstream ss(linea);
+
+        string idUsuario;
+        string nombreUsuario;
+        string idProducto;
+        string nombreProducto;
+        string cantidad;
+        string precio;
+        string subtotal;
+
+        getline(ss, idUsuario, ',');
+        getline(ss, nombreUsuario, ',');
+        getline(ss, idProducto, ',');
+        getline(ss, nombreProducto, ',');
+        getline(ss, cantidad, ',');
+        getline(ss, precio, ',');
+        getline(ss, subtotal, ',');
+
+        cout << "Usuario: " << nombreUsuario
+             << " | Producto: " << nombreProducto
+             << " | Cantidad: " << cantidad
+             << " | Precio: $" << precio
+             << endl;
+    }
+
+    archivo.close();
+}
+
+//punto 2
 void generarOrdenDeCompra(const Usuario &usuario, vector<ItemCarrito> &carrito, int &contadorOrdenes) {
     if (carrito.empty()) {
         cout << "\nEl carrito esta vacio. No se puede generar una orden de compra.\n";
@@ -297,18 +338,15 @@ void generarOrdenDeCompra(const Usuario &usuario, vector<ItemCarrito> &carrito, 
     // Vaciar el carrito después de realizar la compra
     carrito.clear(); 
 }
-
-// fin cambio punto 2
+//punto 2
 int main() {
 	setlocale(LC_ALL, "spanish");
     vector<Usuario> usuarios = cargarUsuarios("Usuarios.txt");
     vector<Producto> productos = cargarProductos("Productos.txt");
     vector<ItemCarrito> carrito;
     vector<Comentario> listaComentarios = cargarComentarios("Comentarios.txt");
-//cambio en el main punto 2
 
     int contadorOrdenes = 0;
-//cambio en el main punto 2
 
     string correo, contrasena;
     cout << "Correo electr�nico: ";
@@ -332,9 +370,8 @@ int main() {
         cout << "5. Guardar carrito en archivo\n";
         cout << "6. Ver carrito guardado (archivo)\n";
         cout << "7. Visualizar comentarios\n";
-        //punto 2
-        cout << "8. Pagar carrito y Generar Orden de Compra\n";
-    //punto 2
+        cout << "8. Listar productos del carrito por usuario\n";
+        cout << "9. Pagar carrito y Generar Orden de Compra\n";
         cout << "0. Salir\n";
         cout << "Seleccione una opci�n: ";
         cin >> opcion;
@@ -409,12 +446,16 @@ int main() {
     
     mostrarComentariosDesdeFecha(listaComentarios, fechaBusqueda);
     break;
+        }
+         
+        case 8:{
+    listarProductosCarritoPorUsuario();
+    break;
 }
-// punto 2
-case 8:
+
+case 9:
             generarOrdenDeCompra(*usuarioActual, carrito, contadorOrdenes);
             break;
-//punto 2
 
         case 0:
             cout << "Saliendo del sistema...\n";
