@@ -36,6 +36,18 @@ struct Comentario {
     string fecha;     
 };
 
+//hice aqui el cambio de punto 2
+struct OrdenDeCompra {
+    int idOrden;
+    Usuario usuario;
+    vector<ItemCarrito> productos;
+    double subtotal;
+    double impuestos;
+    double envio;
+    double total;
+};
+//termina cambio punto 2
+
 
 int convertirEntero(const string &texto) {
     int valor = 0;
@@ -224,14 +236,79 @@ void mostrarComentariosDesdeFecha(const vector<Comentario> &comentarios, const s
         cout << "No se encontraron comentarios despu�s de esa fecha.\n";
     }
 }
+// cambio punto 2
 
+void generarOrdenDeCompra(const Usuario &usuario, vector<ItemCarrito> &carrito, int &contadorOrdenes) {
+    if (carrito.empty()) {
+        cout << "\nEl carrito esta vacio. No se puede generar una orden de compra.\n";
+        return;
+    }
 
+    OrdenDeCompra orden;
+    orden.idOrden = ++contadorOrdenes; // Aumenta el ID de la orden automáticamente
+    orden.usuario = usuario;
+    orden.productos = carrito;
+    orden.subtotal = 0.0;
+
+    // Calcular subtotal
+    for (size_t i = 0; i < carrito.size(); ++i) {
+        orden.subtotal += carrito[i].cantidad * carrito[i].producto.precio;
+    }
+
+    // Calcular impuestos (ejemplo: 19% de IVA) y envío (ejemplo: 5000 fijos)
+    orden.impuestos = orden.subtotal * 0.19; 
+    orden.envio = 5000.0; 
+    orden.total = orden.subtotal + orden.impuestos + orden.envio;
+
+    // Guardar la orden en un archivo .txt
+    ofstream archivo("OrdenDeCompra.txt", ios::app);
+    if (!archivo) {
+        cout << "Error: No se pudo abrir o crear el archivo OrdenDeCompra.txt\n";
+        return;
+    }
+
+    archivo << "=== ORDEN DE COMPRA #" << orden.idOrden << " ===\n";
+    archivo << "Usuario: " << orden.usuario.nombre << " (ID: " << orden.usuario.id << ")\n";
+    archivo << "Productos Comprados:\n";
+    
+    for (size_t i = 0; i < orden.productos.size(); ++i) {
+        double subtotalProducto = orden.productos[i].cantidad * orden.productos[i].producto.precio;
+        archivo << "  - " << orden.productos[i].producto.nombre 
+                << " | Cantidad: " << orden.productos[i].cantidad 
+                << " | Precio Unitario: $" << orden.productos[i].producto.precio
+                << " | Subtotal: $" << subtotalProducto << "\n";
+    }
+
+    archivo << "-----------------------------------\n";
+    archivo << "Subtotal:  $" << orden.subtotal << "\n";
+    archivo << "Impuestos: $" << orden.impuestos << "\n";
+    archivo << "Envio:     $" << orden.envio << "\n";
+    archivo << "TOTAL:     $" << orden.total << "\n";
+    archivo << "===================================\n\n";
+
+    archivo.close();
+
+    cout << "\n===================================\n";
+    cout << "¡ORDEN DE COMPRA #" << orden.idOrden << " GENERADA CON EXITO!\n";
+    cout << "Total a pagar: $" << orden.total << "\n";
+    cout << "La orden ha sido guardada en 'OrdenDeCompra.txt'.\n";
+    cout << "===================================\n";
+
+    // Vaciar el carrito después de realizar la compra
+    carrito.clear(); 
+}
+
+// fin cambio punto 2
 int main() {
 	setlocale(LC_ALL, "spanish");
     vector<Usuario> usuarios = cargarUsuarios("Usuarios.txt");
     vector<Producto> productos = cargarProductos("Productos.txt");
     vector<ItemCarrito> carrito;
     vector<Comentario> listaComentarios = cargarComentarios("Comentarios.txt");
+//cambio en el main punto 2
+
+    int contadorOrdenes = 0;
+//cambio en el main punto 2
 
     string correo, contrasena;
     cout << "Correo electr�nico: ";
@@ -255,6 +332,9 @@ int main() {
         cout << "5. Guardar carrito en archivo\n";
         cout << "6. Ver carrito guardado (archivo)\n";
         cout << "7. Visualizar comentarios\n";
+        //punto 2
+        cout << "8. Pagar carrito y Generar Orden de Compra\n";
+    //punto 2
         cout << "0. Salir\n";
         cout << "Seleccione una opci�n: ";
         cin >> opcion;
@@ -330,6 +410,12 @@ int main() {
     mostrarComentariosDesdeFecha(listaComentarios, fechaBusqueda);
     break;
 }
+// punto 2
+case 8:
+            generarOrdenDeCompra(*usuarioActual, carrito, contadorOrdenes);
+            break;
+//punto 2
+
         case 0:
             cout << "Saliendo del sistema...\n";
             break;
